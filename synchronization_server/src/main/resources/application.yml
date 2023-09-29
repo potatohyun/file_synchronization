@@ -1,0 +1,5 @@
+target:
+    save-directory: /Users/jihyun/Desktop/inspien_assignment/directory_remote
+
+server:
+    port: 8081

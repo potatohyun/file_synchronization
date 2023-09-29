@@ -1,0 +1,22 @@
+target:
+  directory: /Users/jihyun/Desktop/inspien_assignment/directory_local
+
+server:
+  url: http://localhost:8081/upload
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:mysql://3.35.244.9:3306/files
+    username: root
+    password: root
+  jpa:
+    properties:
+      hibernate:
+        show_sql: false
+        format_sql: false
+        use_sql_comments: false
+    hibernate:
+      ddl-auto: update
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy
