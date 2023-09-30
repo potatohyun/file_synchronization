@@ -37,6 +37,26 @@ public class UploadService {
             System.out.println("File upload failed.");
         }
     }
+    public static void uploadSavedDir(String serverUrl, String dirPath){
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> requestEntity = new HttpEntity<>(dirPath, headers);
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = restTemplate.exchange(
+                serverUrl,
+                HttpMethod.POST,
+                requestEntity,
+                String.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Diretory uploaded successfully.");
+        } else {
+            System.out.println("Diretory uploaded failed.");
+        }
+    }
 
     public static void uploadDeletedFile(String serverUrl, String deletePath){
         HttpHeaders headers = new HttpHeaders();
@@ -53,9 +73,9 @@ public class UploadService {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("String sent successfully.");
+            System.out.println("Delete Info upload successfully.");
         } else {
-            System.out.println("String sending failed.");
+            System.out.println("Delete Info upload failed.");
         }
     }
 }

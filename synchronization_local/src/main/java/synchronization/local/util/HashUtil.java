@@ -8,16 +8,18 @@ import java.security.MessageDigest;
 
 @Slf4j
 public class HashUtil {
-    public static String hashAlgorithm(String filePath) {
+    public static String hashAlgorithm(String filePath, boolean isFile) {
         try{
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
 
             // 파일 경로를 바이트 배열로 변환
             byte[] filePathBytes = filePath.getBytes("UTF-8");
-            // 파일 내용을 읽어와 해시값 계산
-            byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
             digest.update(filePathBytes);
-            digest.update(fileBytes);
+            // 파일의 경우 내용을 읽어와 해시값 계산
+            if (isFile) {
+                byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
+                digest.update(fileBytes);
+            }
 
             byte[] hash = digest.digest();
             StringBuffer hexString = new StringBuffer();

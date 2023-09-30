@@ -33,7 +33,9 @@ public class LocalFileChekingService {
         File[] localFiles = directory.listFiles();
 
         for (File file : localFiles) {
-            String fileHash = HashUtil.hashAlgorithm(file.getAbsolutePath());
+
+            String fileHash = HashUtil.hashAlgorithm(file.getAbsolutePath(), file.isFile());
+
             if (!chekingFilesRepository.existsByFileHash(fileHash)) {
                 // 같은 경로에 동일한 파일이 존재하는 경우(변경) -> 해쉬값, 업데이트 날짜 수정
                 ChekingFiles update = chekingFilesRepository.findByNameAndPathAndType(
@@ -63,9 +65,17 @@ public class LocalFileChekingService {
                     log.info("새로운 파일 생성됨");
 
                 }
-                //서버로 전송
                 String savePath = SubstringPathUtil.substringPath(file.getAbsolutePath(), targetDirectory);
-                UploadService.uploadSavedFile(serverUrl, file.getAbsolutePath(), savePath);
+                //서버로 전송
+                if (file.isFile()){
+                    UploadService.uploadSavedFile(serverUrl + "/file", file.getAbsolutePath(), savePath);
+                }else {
+                    UploadService.uploadSavedDir(serverUrl + "/dir", savePath);
+                }
+            }
+            // 디렉토리라면 하위 디렉토리도 탐색(재귀)
+            if (file.isDirectory()) {
+                chekingFile(file);
             }
         }
     };
@@ -74,20 +84,25 @@ public class LocalFileChekingService {
         List<ChekingFiles> dbFileList = chekingFilesRepository.findAll();
         for (ChekingFiles file : dbFileList){
             File localFile = new File(file.getPath());
-            // 로컬에 없는데 DB에 있으면 해당 데이터를 DB에서 삭제
+            // DB에 있는데 로컬에 없으면 해당 데이터를 DB에서 삭제
             if (!localFile.exists()) {
                 chekingFilesRepository.delete(file);
                 log.info("존재하지 않는 파일 삭제");
 
                 //서버로 삭제 경로 전송
                 String deletePath = SubstringPathUtil.substringPath(file.getPath(), targetDirectory);
-                UploadService.uploadDeletedFile(serverUrl, deletePath);
+                if (file.getType().equals("file")){
+                    UploadService.uploadDeletedFile(serverUrl + "/file", deletePath);
+                }else {
+                    UploadService.uploadDeletedFile(serverUrl + "/dir", deletePath);
+                }
+
             }
         }
     }
 
 
-    // 8초마다 스케줄러 실행
+    // 5초마다 스케줄러 실행
     @Scheduled(fixedRate = 5000)
     public void runScheduled() {
         log.info("Running Scheduled");
