@@ -1,5 +1,7 @@
 package synchronization.local.service;
 
+import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -9,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 
+@Slf4j
 @Service
 public class UploadService {
 
@@ -32,9 +35,9 @@ public class UploadService {
         ResponseEntity<String> response = restTemplate.postForEntity(serverUrl, requestEntity, String.class);
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("File uploaded successfully.");
+            log.info("File uploaded successfully.");
         } else {
-            System.out.println("File upload failed.");
+            log.info("File upload failed.");
         }
     }
     public static void uploadSavedDir(String serverUrl, String dirPath){
@@ -52,9 +55,9 @@ public class UploadService {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Diretory uploaded successfully.");
+            log.info("Diretory uploaded successfully.");
         } else {
-            System.out.println("Diretory uploaded failed.");
+            log.info("Diretory uploaded failed.");
         }
     }
 
@@ -73,9 +76,9 @@ public class UploadService {
         );
 
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Delete Info upload successfully.");
+            log.info("Delete Info upload successfully.");
         } else {
-            System.out.println("Delete Info upload failed.");
+            log.info("Delete Info upload failed.");
         }
     }
 }

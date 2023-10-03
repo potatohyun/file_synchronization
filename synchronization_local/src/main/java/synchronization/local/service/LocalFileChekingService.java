@@ -80,7 +80,7 @@ public class LocalFileChekingService {
         }
     };
 
-    private void deleteFile() {
+    public void deleteFile() {
         List<ChekingFiles> dbFileList = chekingFilesRepository.findAll();
         for (ChekingFiles file : dbFileList){
             File localFile = new File(file.getPath());
@@ -96,20 +96,18 @@ public class LocalFileChekingService {
                 }else {
                     UploadService.uploadDeletedFile(serverUrl + "/dir", deletePath);
                 }
-
             }
         }
     }
 
 
-    // 5초마다 스케줄러 실행
-    @Scheduled(fixedRate = 5000)
+    // 1초마다 스케줄러 실행
+    @Scheduled(fixedRate = 1000)
     public void runScheduled() {
         log.info("Running Scheduled");
         //파일 변화 체크
         chekingFile(new File(targetDirectory));
         //변경사항, 삭제에 대한 파일 삭제
         deleteFile();
-
     }
 }
